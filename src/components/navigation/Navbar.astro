@@ -3,7 +3,6 @@ import Logo from "@components/base/Logo.astro";
 import ButtonMain from "@components/base/ButtonMain.astro";
 import ThemeToggler from "@components/base/ThemeToggler.astro";
 import Hamburger from "@components/base/Hamburger.astro";
-import NavbarSearchFilters from "@components/navigation/NavbarSearchFilters.astro";
 ---
 
 <div
@@ -46,7 +45,6 @@ import NavbarSearchFilters from "@components/navigation/NavbarSearchFilters.astr
         >
           <iconify-icon class="iconify w-4 h-4" icon="lucide:search"></iconify-icon>
         </div>
-        <NavbarSearchFilters />
       </div>
       <div class="flex items-center justify-center h-20 w-20 lg:hidden ml-auto">
         <Hamburger />
@@ -58,32 +56,26 @@ import NavbarSearchFilters from "@components/navigation/NavbarSearchFilters.astr
       :class="$store.app.mobileOpen ? 'absolute top-[80px] left-0 w-full flex text-center px-6 pt-2 pb-6 border-t border-muted-200 dark:border-muted-800 bg-white dark:bg-muted-900 shadow-lg shadow-muted-300/40 dark:shadow-muted-900/50' : 'hidden lg:flex lg:flex-row'"
     >
       <div class="flex flex-col lg:flex-row items-center gap-x-6 lg:gap-x-10">
-        <div class="relative py-3 lg:py-5 after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:h-[3px] after:rounded-t-full after:transition-all after:duration-300 transition-colors duration-300"
-          :class="activeStep === 'spy-1' ? 'text-primary-500 after:bg-primary-500 after:w-full' : 'text-slate-500 dark:text-slate-400 hover:text-muted-700 dark:hover:text-muted-100 after:w-0'"
-        >
-          <a href="#doctors">Doctors</a>
-        </div>
-        <div class="relative py-3 lg:py-5 after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:h-[3px] after:rounded-t-full after:transition-all after:duration-300 transition-colors duration-300"
-          :class="activeStep === 'spy-2' ? 'text-primary-500 after:bg-primary-500 after:w-full' : 'text-slate-500 dark:text-slate-400 hover:text-muted-700 dark:hover:text-muted-100 after:w-0'"
-        >
-          <a href="#product">Product</a>
-        </div>
-        <div class="relative py-3 lg:py-5 after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:h-[3px] after:rounded-t-full after:transition-all after:duration-300 transition-colors duration-300"
-          :class="activeStep === 'spy-3' ? 'text-primary-500 after:bg-primary-500 after:w-full' : 'text-slate-500 dark:text-slate-400 hover:text-muted-700 dark:hover:text-muted-100 after:w-0'"
-        >
-          <a href="#pricing">Pricing</a>
-        </div>
+        <!-- Botón de Telemedicina -->
         <div class="relative py-3 lg:py-5 text-slate-500 dark:text-slate-400 hover:text-muted-700 dark:hover:text-muted-100 transition-colors duration-300">
-          <a href="#">Sign In</a>
+          <a href="#telemedicine">Telemedicina</a>
         </div>
+        <!-- Botón de Chat Bot -->
+        <div class="relative py-3 lg:py-5 text-slate-500 dark:text-slate-400 hover:text-muted-700 dark:hover:text-muted-100 transition-colors duration-300">
+          <a href="#chatbot">Chat Bot</a>
+        </div>
+       <!-- Sign In -->
+<div class="relative py-3 lg:py-5 text-slate-500 dark:text-slate-400 hover:text-muted-700 dark:hover:text-muted-100 transition-colors duration-300">
+  <a href="/login">Sign In</a>
+</div>
         <div class="py-3 lg:py-5">
           <ThemeToggler />
         </div>
       </div>
       <div class="w-full md:w-auto">
-        <ButtonMain to={"#"} class="'w-full md:w-[240px] lg:w-[110px]'"
-          >Signup</ButtonMain
-        >
+        <ButtonMain to={"/signup"} class="'w-full md:w-[240px] lg:w-[110px]'">
+          Signup
+        </ButtonMain>
       </div>
     </div>
   </div>
