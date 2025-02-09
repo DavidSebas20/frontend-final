@@ -46,6 +46,20 @@ import SectionTitle from "@components/section/SectionTitle.astro";
               />
             </div>
 
+            <!-- Toggle switch para seleccionar si es doctor -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-slate-700 dark:text-slate-300">I am a Doctor</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="is-doctor"
+                  value="true"
+                  class="sr-only peer"
+                />
+                <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+              </label>
+            </div>
+
             <!-- Botón de inicio de sesión -->
             <div>
               <ButtonMain type="submit" class="'w-full'">Sign In</ButtonMain>
