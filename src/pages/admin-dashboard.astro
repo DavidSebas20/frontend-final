@@ -1,0 +1,204 @@
+---
+// src/pages/AdminDashboard.astro
+import AdminLayout from "@layouts/adminlayout.astro";
+import SectionTitle from "@components/section/SectionTitle.astro";
+import ButtonMain from "@components/base/ButtonMain.astro";
+
+const doctors = [
+  { id: 1, name: "Dr. John Doe", email: "john.doe@example.com", specialty: "Cardiology" },
+  { id: 2, name: "Dr. Jane Smith", email: "jane.smith@example.com", specialty: "Dermatology" },
+  { id: 3, name: "Dr. Alice Johnson", email: "alice.johnson@example.com", specialty: "Pediatrics" },
+];
+
+const metrics = {
+  totalVisits: 12345,
+  activeUsers: 890,
+  systemUptime: "99.9%",
+  averageLoadTime: "1.2s",
+};
+
+let isModalOpen = false;
+let selectedDoctor = null;
+
+const openModal = (doctor = null) => {
+  selectedDoctor = doctor;
+  isModalOpen = true;
+  updateModal();
+};
+
+const closeModal = () => {
+  selectedDoctor = null;
+  isModalOpen = false;
+  updateModal();
+};
+
+const handleDelete = (id) => {
+  console.log("Doctor deleted:", id);
+};
+
+const updateModal = () => {
+  // Esta función actualiza el estado del modal en el DOM
+  const modal = document.getElementById("doctor-modal");
+  if (modal) {
+    modal.style.display = isModalOpen ? "flex" : "none";
+  }
+};
+---
+
+<AdminLayout title="Admin Dashboard">
+  <div class="py-10">
+    <!-- Título del dashboard -->
+    <div class="flex justify-between items-center mb-8">
+      <SectionTitle
+        title="Admin Dashboard"
+        subtitle="Manage your doctors and monitor your platform."
+      />
+      <!-- Botón para agregar un nuevo doctor -->
+      <ButtonMain onclick="openModal()" class="'w-40'">Add Doctor</ButtonMain>
+    </div>
+
+    <!-- Sección de métricas -->
+    <SectionTitle
+      title="Platform Metrics"
+      subtitle="Monitor the performance and usage of your platform."
+      class="'mb-6'"
+    />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
+        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">Total Visits</h3>
+        <p class="text-2xl font-bold text-primary-600">{metrics.totalVisits}</p>
+      </div>
+      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
+        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">Active Users</h3>
+        <p class="text-2xl font-bold text-green-500">{metrics.activeUsers}</p>
+      </div>
+      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
+        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">System Uptime</h3>
+        <p class="text-2xl font-bold text-blue-500">{metrics.systemUptime}</p>
+      </div>
+      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
+        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">Average Load Time</h3>
+        <p class="text-2xl font-bold text-rose-500">{metrics.averageLoadTime}</p>
+      </div>
+    </div>
+
+    <!-- Tabla de doctores -->
+    <SectionTitle
+      title="Doctors Management"
+      subtitle="List of all registered doctors."
+      class="'mb-6'"
+    />
+
+    <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6">
+      <table class="w-full text-sm text-left text-slate-700 dark:text-slate-300 border-collapse">
+        <thead class="bg-slate-100 dark:bg-muted-800">
+          <tr>
+            <th class="px-6 py-3 font-medium text-slate-700 dark:text-slate-300">Name</th>
+            <th class="px-6 py-3 font-medium text-slate-700 dark:text-slate-300">Email</th>
+            <th class="px-6 py-3 font-medium text-slate-700 dark:text-slate-300">Specialty</th>
+            <th class="px-6 py-3 font-medium text-slate-700 dark:text-slate-300">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 dark:divide-muted-700">
+          {doctors.map((doctor) => (
+            <tr id={doctor.id.toString()}>
+              <td class="px-6 py-4">{doctor.name}</td>
+              <td class="px-6 py-4">{doctor.email}</td>
+              <td class="px-6 py-4">{doctor.specialty}</td>
+              <td class="px-6 py-4">
+                <ButtonMain onclick={`openModal(${JSON.stringify(doctor)})`} size="small" class="'w-20'">Edit</ButtonMain>
+                <ButtonMain onclick={`handleDelete(${doctor.id})`} size="small" variant="danger" class="'w-20 ml-2'">Delete</ButtonMain>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal para crear/editar doctor -->
+    <div id="doctor-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg w-full max-w-md p-6">
+        <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
+          {selectedDoctor ? "Edit Doctor" : "Add Doctor"}
+        </h2>
+        <form method="POST" action="/api/save-doctor" class="space-y-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={selectedDoctor?.name || ""}
+              required
+              class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={selectedDoctor?.email || ""}
+              required
+              class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label for="specialty" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Specialty</label>
+            <input
+              type="text"
+              id="specialty"
+              name="specialty"
+              value={selectedDoctor?.specialty || ""}
+              required
+              class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            />
+          </div>
+          <div class="flex justify-end">
+            <button type="submit" class="w-32 bg-primary-500 text-white rounded-md px-4 py-2">
+              {selectedDoctor ? "Update" : "Create"}
+            </button>
+            <button
+              type="button"
+              onclick="closeModal()"
+              class="w-32 ml-2 bg-gray-200 text-gray-700 rounded-md px-4 py-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script para manejar eventos -->
+  <script>
+    let isModalOpen = false;
+    let selectedDoctor = null;
+
+    const openModal = (doctor = null) => {
+      selectedDoctor = doctor;
+      isModalOpen = true;
+      updateModal();
+    };
+
+    const closeModal = () => {
+      selectedDoctor = null;
+      isModalOpen = false;
+      updateModal();
+    };
+
+    const handleDelete = (id) => {
+      console.log("Doctor deleted:", id);
+    };
+
+    const updateModal = () => {
+      const modal = document.getElementById("doctor-modal");
+      if (modal) {
+        modal.style.display = isModalOpen ? "flex" : "none";
+      }
+    };
+  </script>
+</AdminLayout>
