@@ -1,0 +1,22 @@
+---
+// src/layouts/AdminLayout.astro
+import SectionMuted from "@components/section/SectionMuted.astro";
+import Container from "@components/section/Container.astro";
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+</head>
+<body class="bg-white dark:bg-muted-900 text-slate-700 dark:text-slate-300">
+  <SectionMuted>
+    <Container>
+      <slot />
+    </Container>
+  </SectionMuted>
+</body>
+</html>

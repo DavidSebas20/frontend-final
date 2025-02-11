@@ -1,0 +1,92 @@
+---
+// src/pages/SignUp.astro
+import Layout from "@layouts/Default.astro";
+import ButtonMain from "@components/base/ButtonMain.astro";
+import SectionMuted from "@components/section/SectionMuted.astro";
+import Container from "@components/section/Container.astro";
+import SectionTitle from "@components/section/SectionTitle.astro";
+---
+
+<Layout title="Sign Up">
+  <SectionMuted>
+    <Container>
+      <div class="min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-md p-8 space-y-6 bg-white dark:bg-muted-900 rounded-lg shadow-lg">
+          <SectionTitle
+            title="Sign Up"
+            subtitle="Create your account to access our services."
+            class="'text-center'"
+          />
+
+          <!-- Formulario de registro -->
+          <form action="#" method="POST" class="space-y-4">
+            <!-- Campo de nombre -->
+            <div>
+              <label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                placeholder="John Doe"
+              />
+            </div>
+
+            <!-- Campo de correo electrónico -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <!-- Campo de contraseña -->
+            <div>
+              <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                placeholder="********"
+              />
+            </div>
+
+            <!-- Campo de confirmación de contraseña -->
+            <div>
+              <label for="confirm-password" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Confirm Password</label>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                placeholder="********"
+              />
+            </div>
+
+            <!-- Botón de registro -->
+            <div>
+              <ButtonMain type="submit" class="'w-full'">Sign Up</ButtonMain>
+            </div>
+          </form>
+
+          <!-- Enlace para iniciar sesión -->
+          <div class="text-center">
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Already have an account?
+              <a href="/login" class="text-primary-500 hover:underline">Sign In</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </SectionMuted>
+</Layout>
