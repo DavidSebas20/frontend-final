@@ -50,6 +50,6 @@ jobs:
           fi
           sudo docker pull dssanguano/frontend-final:${{ github.ref_name }}
           sudo docker rm -f frontend-final-container || true
-          sudo docker run -d -p 5000:5000 --name frontend-final-container dssanguano/frontend-final:${{ github.ref_name }}
+          sudo docker run -d -p 4321:4321 --name frontend-final-container dssanguano/frontend-final:${{ github.ref_name }}
           EOF
 
