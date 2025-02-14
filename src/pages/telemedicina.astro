@@ -1,0 +1,81 @@
+---
+// Importaciones de componentes y estilos
+import AdminLayout from "@layouts/adminlayout.astro";
+import SectionTitle from "@components/section/SectionTitle.astro";
+---
+<AdminLayout title="Telemedicina">
+  <div class="py-10">
+    <!-- Título de la página -->
+    <SectionTitle
+      title="Telemedicina"
+      subtitle="Accede a consultas médicas en línea desde cualquier lugar."
+      class="'mb-6'"
+    />
+
+    <!-- Formulario de Telemedicina -->
+    <div class="mt-6 w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
+      <form
+        id="telemedicineForm"
+        class="space-y-4"
+      >
+        <!-- Nombre del Doctor -->
+        <div>
+          <label for="doctorName" class="block text-sm font-medium text-gray-700">Doctor Name</label>
+          <input
+            type="text"
+            id="doctorName"
+            name="doctorName"
+            required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <!-- Fecha y Hora de la Consulta -->
+        <div>
+          <label for="consultationDateTime" class="block text-sm font-medium text-gray-700">Date and Time</label>
+          <input
+            type="datetime-local"
+            id="consultationDateTime"
+            name="consultationDateTime"
+            required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <!-- Plataforma de Telemedicina -->
+        <div>
+          <label for="platform" class="block text-sm font-medium text-gray-700">Platform</label>
+          <select
+            id="platform"
+            name="platform"
+            required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="Zoom">Zoom</option>
+            <option value="Google Meet">Google Meet</option>
+            <option value="Microsoft Teams">Microsoft Teams</option>
+          </select>
+        </div>
+        <!-- Botón de Envío -->
+        <button
+          type="submit"
+          class="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+        >
+          Schedule Telemedicine Consultation
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script para manejar eventos -->
+  <script>
+    // Intercepta el envío del formulario para evitar que se envíen datos
+    document.getElementById('telemedicineForm')?.addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevenir el envío del formulario
+
+      // Simular una respuesta exitosa
+      alert('¡Su consulta de telemedicina ha sido agendada exitosamente!');
+
+      // Limpiar el formulario
+      (this as HTMLFormElement).reset();
+    });
+  </script>
+</AdminLayout>
