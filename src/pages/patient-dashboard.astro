@@ -1,166 +1,88 @@
 ---
-// src/pages/PatientDashboard.astro
+// src/pages/PatientAppointments.astro
 import AdminLayout from "@layouts/adminlayout.astro";
 import SectionTitle from "@components/section/SectionTitle.astro";
 import ButtonMain from "@components/base/ButtonMain.astro";
 import Table from "@components/content/Table.astro"; // Componente de tabla
 
-const doctors = [
-  { id: 1, name: "Dr. John Doe", specialty: "Cardiology" },
-  { id: 2, name: "Dr. Jane Smith", specialty: "Dermatology" },
-  { id: 3, name: "Dr. Alice Johnson", specialty: "Pediatrics" },
-];
+const BASE_URL = "http://appointment-alb-212598074.us-east-1.elb.amazonaws.com"; // URL del backend
+let appointments = [];
+const patientId = Astro.props.patientId; // ID del paciente (puede ser pasado como prop)
 
-const appointments = [
-  { id: 1, doctor: "Dr. John Doe", date: "2023-10-15", time: "10:00 AM", status: "Confirmed" },
-  { id: 2, doctor: "Dr. Jane Smith", date: "2023-10-16", time: "11:30 AM", status: "Pending" },
-];
-
-const metrics = {
-  totalAppointments: 2,
-  confirmedAppointments: 1,
-  pendingAppointments: 1,
-  cancelledAppointments: 0,
+// Función para cargar las citas del paciente
+const loadAppointments = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/read-appointment/appointments/patient/${patientId}`);
+    if (!response.ok) {
+      throw new Error(`Error al cargar las citas: ${response.statusText}`);
+    }
+    appointments = await response.json();
+  } catch (error) {
+    console.error("Error al cargar las citas:", error.message);
+    alert("Hubo un error al cargar las citas. Por favor, inténtalo de nuevo.");
+  }
 };
+
+// Cargar las citas al iniciar la página
+await loadAppointments();
 ---
 
-<AdminLayout title="Patient Dashboard">
+<AdminLayout title="Patient Appointments">
   <div class="py-10">
     <!-- Título del dashboard -->
     <div class="flex justify-between items-center mb-8">
       <SectionTitle
-        title="Patient Dashboard"
-        subtitle="Welcome back, John Doe! Here's an overview of your appointments."
+        title="Patient Appointments"
+        subtitle="Manage appointments for the selected patient."
       />
-      <!-- Botón de cerrar sesión -->
-      <ButtonMain to="/logout" variant="secondary" class="'w-32'">Logout</ButtonMain>
-    </div>
-
-    <!-- Sección de métricas -->
-    <SectionTitle
-      title="Your Metrics"
-      subtitle="Track your upcoming and past appointments."
-      class="'mb-6'"
-    />
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
-        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">Total Appointments</h3>
-        <p class="text-2xl font-bold text-primary-600">{metrics.totalAppointments}</p>
-      </div>
-      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
-        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">Confirmed Appointments</h3>
-        <p class="text-2xl font-bold text-green-500">{metrics.confirmedAppointments}</p>
-      </div>
-      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
-        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">Pending Appointments</h3>
-        <p class="text-2xl font-bold text-yellow-500">{metrics.pendingAppointments}</p>
-      </div>
-      <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 text-center">
-        <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300">Cancelled Appointments</h3>
-        <p class="text-2xl font-bold text-red-500">{metrics.cancelledAppointments}</p>
-      </div>
-    </div>
-
-    <!-- Formulario para crear una cita -->
-    <SectionTitle
-      title="Book an Appointment"
-      subtitle="Schedule a new appointment with your preferred doctor."
-      class="'mb-6'"
-    />
-
-    <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6">
-      <form id="appointment-form" class="space-y-4">
-        <div>
-          <label for="doctor" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Doctor</label>
-          <select
-            id="doctor"
-            name="doctor"
-            required
-            class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-          >
-            <option value="">Select a doctor</option>
-            {doctors.map((doctor) => (
-              <option value={doctor.name}>
-                {doctor.name} ({doctor.specialty})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label for="date" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Date</label>
-          <input
-            type="date"
-            id="date"
-            name="date"
-            required
-            class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label for="time" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Time</label>
-          <input
-            type="time"
-            id="time"
-            name="time"
-            required
-            class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <button type="submit" class="w-full bg-primary-500 text-white rounded-md px-4 py-2">
-            Book Appointment
-          </button>
-        </div>
-      </form>
+      <!-- Botón para crear una nueva cita -->
+      <ButtonMain onclick="window.app.createAppointment()" variant="primary" class="w-32">
+        New Appointment
+      </ButtonMain>
     </div>
 
     <!-- Tabla de citas -->
     <SectionTitle
-      title="Your Appointments"
-      subtitle="Manage your upcoming and past appointments."
-      class="'mb-6 mt-10'"
+      title="Appointments"
+      subtitle="View and manage existing appointments."
+      class="mb-6 mt-10"
     />
-
     <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6">
       <Table>
-        <thead>
+        <!-- Encabezado de la tabla -->
+        <thead slot="thead">
           <tr>
-            <th>Doctor</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th class="px-4 py-2">Date</th>
+            <th class="px-4 py-2">Time</th>
+            <th class="px-4 py-2">Doctor</th>
+            <th class="px-4 py-2">Reason</th>
+            <th class="px-4 py-2">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <!-- Cuerpo de la tabla -->
+        <tbody slot="tbody">
           {appointments.map((appointment) => (
-            <tr id={`appointment-${appointment.id}`}>
-              <td>{appointment.doctor}</td>
-              <td>{appointment.date}</td>
-              <td>{appointment.time}</td>
-              <td>
-                <span
-                  class={`inline-block px-2 py-1 rounded-full text-sm font-medium ${
-                    appointment.status === "Confirmed"
-                      ? "bg-green-100 text-green-800"
-                      : appointment.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
+            <tr
+              id={`appointment-${appointment.id}`}
+              class="hover:bg-slate-100 dark:hover:bg-muted-800"
+            >
+              <td class="px-4 py-2">{appointment.date}</td>
+              <td class="px-4 py-2">{appointment.time}</td>
+              <td class="px-4 py-2">{appointment.doctorName}</td>
+              <td class="px-4 py-2">{appointment.reason}</td>
+              <td class="px-4 py-2">
+                <button
+                  data-id={appointment.id}
+                  class="w-24 bg-blue-500 text-white rounded-md px-4 py-2 edit-appointment"
                 >
-                  {appointment.status}
-                </span>
-              </td>
-              <td>
-                <ButtonMain
-                  onclick={`handleCancelAppointment(${appointment.id})`}
-                  size="small"
-                  variant="danger"
-                  class="'w-24'"
+                  Edit
+                </button>
+                <button
+                  data-id={appointment.id}
+                  class="w-24 bg-red-500 text-white rounded-md px-4 py-2 ml-2 delete-appointment"
                 >
-                  Cancel
-                </ButtonMain>
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -171,24 +93,134 @@ const metrics = {
 
   <!-- Script para manejar eventos -->
   <script>
-    const handleCreateAppointment = (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const appointmentData = {
-        doctor: formData.get("doctor"),
-        date: formData.get("date"),
-        time: formData.get("time"),
-      };
-      console.log("New appointment created:", appointmentData);
-      // Aquí puedes enviar los datos al backend para guardar la cita
+    const BASE_URL = "http://appointment-alb-212598074.us-east-1.elb.amazonaws.com"; // URL del backend
+    const PATIENT_ID = "{patientId}";
+
+    // Crear un objeto global para exponer las funciones
+    window.app = {
+      createAppointment: async () => {
+        const date = prompt("Enter appointment date (YYYY-MM-DD):");
+        const time = prompt("Enter appointment time (HH:mm):");
+        const doctorName = prompt("Enter doctor's name:");
+        const reason = prompt("Enter reason for the appointment:");
+
+        if (!date || !time || !doctorName || !reason) {
+          alert("All fields are required to create an appointment.");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${BASE_URL}/create-appointment`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              patientId: PATIENT_ID,
+              date,
+              time,
+              doctorName,
+              reason,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Error creating appointment: ${response.statusText}`);
+          }
+
+          alert("Appointment created successfully!");
+          location.reload(); // Recargar la página para reflejar los cambios
+        } catch (error) {
+          console.error("Error creating appointment:", error.message);
+          alert("There was an error creating the appointment. Please try again.");
+        }
+      },
+
+      editAppointment: async (id) => {
+        const date = prompt("Enter new appointment date (YYYY-MM-DD):");
+        const time = prompt("Enter new appointment time (HH:mm):");
+        const doctorName = prompt("Enter new doctor's name:");
+        const reason = prompt("Enter new reason for the appointment:");
+
+        if (!date || !time || !doctorName || !reason) {
+          alert("All fields are required to update the appointment.");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${BASE_URL}/update-appointment/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              date,
+              time,
+              doctorName,
+              reason,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Error updating appointment: ${response.statusText}`);
+          }
+
+          alert("Appointment updated successfully!");
+          location.reload(); // Recargar la página para reflejar los cambios
+        } catch (error) {
+          console.error("Error updating appointment:", error.message);
+          alert("There was an error updating the appointment. Please try again.");
+        }
+      },
+
+      deleteAppointment: async (id) => {
+        const isConfirmed = confirm("Are you sure you want to delete this appointment?");
+        if (!isConfirmed) return;
+
+        try {
+          const response = await fetch(`${BASE_URL}/delete-appointment/${id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            throw new Error(`Error deleting appointment: ${response.statusText}`);
+          }
+
+          alert("Appointment deleted successfully!");
+          const row = document.getElementById(`appointment-${id}`);
+          if (row) {
+            row.remove();
+          }
+        } catch (error) {
+          console.error("Error deleting appointment:", error.message);
+          alert("There was an error deleting the appointment. Please try again.");
+        }
+      },
     };
 
-    const handleCancelAppointment = (id) => {
-      console.log(`Appointment ${id} cancelled`);
-      // Aquí puedes enviar una solicitud al backend para cancelar la cita
-    };
+   // Asignar eventos a los botones usando addEventListener
+document.addEventListener("DOMContentLoaded", () => {
+  // Botones de edición
+  document.querySelectorAll(".edit-appointment").forEach((button) => {
+    const appointmentId = (button as HTMLButtonElement).dataset.id; // Type casting aquí
+    button.addEventListener("click", () => window.app.editAppointment(appointmentId));
+  });
 
-    // Asignar el evento onsubmit al formulario
-    document.getElementById("appointment-form").addEventListener("submit", handleCreateAppointment);
+  // Botones de eliminación
+  document.querySelectorAll(".delete-appointment").forEach((button) => {
+    const appointmentId = (button as HTMLButtonElement).dataset.id; // Type casting aquí
+    button.addEventListener("click", () => window.app.deleteAppointment(appointmentId));
+  });
+});
+    // Extender la interfaz Window para incluir la propiedad app
+    declare global {
+      interface Window {
+        app: {
+          createAppointment: () => Promise<void>;
+          editAppointment: (id: string) => Promise<void>;
+          deleteAppointment: (id: string) => Promise<void>;
+        };
+      }
+    }
   </script>
 </AdminLayout>
