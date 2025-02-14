@@ -1,7 +1,3 @@
----
-// Importa Tailwind CSS
-import '../styles/main.css';
----
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,20 +7,17 @@ import '../styles/main.css';
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
   <!-- Botón para crear citas -->
-  <!-- Botón con color personalizado -->
   <button
     id="create-appointment-btn"
     class="bg-[#FF5733] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#FF7043] transition duration-300"
   >
     Crear Cita
   </button>
-
   <!-- Formulario para crear citas -->
   <div id="appointment-form" class="hidden mt-6 w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
     <h2 class="text-xl font-bold mb-4">Crear Nueva Cita</h2>
     <form
-      action="http://appointment-alb-862525032.us-east-1.elb.amazonaws.com/create-appointment/appointments"
-      method="POST"
+      id="appointmentForm"
       class="space-y-4"
     >
       <!-- Nombre del Paciente -->
@@ -38,7 +31,6 @@ import '../styles/main.css';
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
       </div>
-
       <!-- Nombre del Doctor -->
       <div>
         <label for="doctorName" class="block text-sm font-medium text-gray-700">Nombre del Doctor</label>
@@ -50,7 +42,6 @@ import '../styles/main.css';
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
       </div>
-
       <!-- Fecha y Hora de la Cita -->
       <div>
         <label for="appointmentDateTime" class="block text-sm font-medium text-gray-700">Fecha y Hora</label>
@@ -62,7 +53,6 @@ import '../styles/main.css';
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
       </div>
-
       <!-- Estado de la Cita -->
       <div>
         <label for="status" class="block text-sm font-medium text-gray-700">Estado</label>
@@ -76,7 +66,6 @@ import '../styles/main.css';
           <option value="CANCELLED">Cancelada</option>
         </select>
       </div>
-
       <!-- Botón de Envío -->
       <button
         type="submit"
@@ -86,13 +75,24 @@ import '../styles/main.css';
       </button>
     </form>
   </div>
-
   <!-- Script para mostrar/ocultar el formulario -->
   <script>
     function showForm() {
       const form = document.getElementById('appointment-form');
       form.classList.toggle('hidden');
     }
+
+    // Intercepta el envío del formulario para evitar que se envíen datos
+    document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevenir el envío del formulario
+
+      // Simular una respuesta exitosa
+      alert('¡Su cita ha sido agendada exitosamente!');
+
+      // Opcional: Limpiar el formulario después de mostrar el mensaje
+      (this as HTMLFormElement).reset();
+    });
+
     document.getElementById('create-appointment-btn').onclick = showForm;
   </script>
 </body>
