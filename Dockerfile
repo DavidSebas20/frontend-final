@@ -1,19 +1,31 @@
-FROM bitnami/node:20 AS build
+# Etapa de construcción: Construir la aplicación
+FROM node:18-alpine AS builder
+
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-RUN corepack enable
+# Copiar los archivos necesarios para instalar dependencias
+COPY package*.json ./
 
-COPY package.json ./
-COPY pnpm-lock.yaml ./
-COPY .npmrc ./
-RUN pnpm install --frozen-lockfile
+# Instalar las dependencias
+RUN npm install
 
+# Copiar el resto del código fuente
 COPY . .
-RUN pnpm build
 
+# Construir la aplicación de Astro
+RUN npm run build
 
-FROM bitnami/nginx:1.25 AS prod
+# Etapa de producción: Servir la aplicación
+FROM node:18-alpine AS runner
+
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-COPY --from=build /app/dist .
-COPY ./nginx/alpinejs.conf /opt/bitnami/nginx/conf/server_blocks/nginx.conf
+# Copiar solo los archivos necesarios para ejecutar la aplicación
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Comando para iniciar la aplicación
+CMD ["npm", "run", "dev"]
