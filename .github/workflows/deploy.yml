@@ -21,7 +21,7 @@ jobs:
         run: docker build -t dssanguano/frontend-final:${{ github.ref_name }} .
 
       - name: Push Docker Image
-        run: docker push dssanguano/frontend-finals:${{ github.ref_name }}
+        run: docker push dssanguano/frontend-final:${{ github.ref_name }}
 
   deploy-qa:
     if: github.ref_name == ${{ github.ref_name }}
