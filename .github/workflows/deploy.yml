@@ -23,7 +23,7 @@ jobs:
       - name: Push Docker Image
         run: docker push dssanguano/frontend-final:${{ github.ref_name }}
 
-  deploy-qa:
+  deploy:
     if: github.ref_name == ${{ github.ref_name }}
     needs: build
     runs-on: ubuntu-latest
@@ -50,6 +50,6 @@ jobs:
           fi
           sudo docker pull dssanguano/frontend-final:${{ github.ref_name }}
           sudo docker rm -f frontend-final-container || true
-          sudo docker run -d -p 4321:4321 --name frontend-final-container dssanguano/frontend-final:${{ github.ref_name }}
+          udo docker run -d -p 4321:4321 --name frontend-final-container dssanguano/frontend-final:${{ github.ref_name }} npm run start -- --host
           EOF
 
