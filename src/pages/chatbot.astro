@@ -10,33 +10,31 @@ import ButtonMain from "@components/base/ButtonMain.astro";
     <div class="flex justify-between items-center mb-8">
       <SectionTitle
         title="Medical Chatbot"
-        subtitle="Ask questions about patient #2's medical history."
+        subtitle="La salud es lo más importante. ¡Haz tus preguntas aquí!"
       />
       <ButtonMain to="/logout" variant="secondary" class="'w-32'">Logout</ButtonMain>
     </div>
-
-    <!-- Interfaz del chatbot -->
-    <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-6 h-[700px] flex flex-col">
-      <!-- Área de conversación -->
-      <div id="chat-area" class="flex-1 overflow-y-auto border-b border-slate-300 dark:border-slate-700 mb-4 p-2 space-y-2">
-        <!-- Aquí se mostrarán los mensajes dinámicamente -->
-      </div>
-
-      <!-- Formulario para enviar mensajes -->
-      <form id="chat-form" class="flex space-x-2 mt-4">
-        <input
-          type="text"
-          id="user-input"
-          placeholder="Type your question about patient #2..."
-          class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-        />
-        <button type="submit" class="bg-primary-500 text-white rounded-md px-4 py-2">
-          Send
-        </button>
-      </form>
+<!-- Interfaz del chatbot -->
+<div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg p-4 h-[500px] flex flex-col">
+    <!-- Área de conversación -->
+    <div id="chat-area" class="h-[300px] overflow-y-auto border-b border-slate-300 dark:border-slate-700 mb-4 p-2 space-y-2">
+      <!-- Aquí se mostrarán los mensajes dinámicamente -->
     </div>
+  
+    <!-- Formulario para enviar mensajes -->
+    <form id="chat-form" class="flex space-x-2 mt-2">
+      <input
+        type="text"
+        id="user-input"
+        placeholder="Type your question about patient #2..."
+        class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+      />
+      <button type="submit" class="bg-primary-500 text-white rounded-md px-4 py-2">
+        Send
+      </button>
+    </form>
   </div>
-
+  
   <!-- Script para manejar eventos -->
   <script>
     const BASE_URL = "http://chatbot-alb-1703376079.us-east-1.elb.amazonaws.com/chat";
