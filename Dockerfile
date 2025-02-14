@@ -1,19 +1,14 @@
-FROM bitnami/node:20 AS build
+# Etapa de construcción
+FROM node:18-alpine AS builder
+
 WORKDIR /app
-
-RUN corepack enable
-
-COPY package.json ./
-COPY pnpm-lock.yaml ./
-COPY .npmrc ./
-RUN pnpm install --frozen-lockfile
-
+COPY package*.json ./
+RUN npm install
 COPY . .
-RUN pnpm build
+RUN npm run build
 
-
-FROM bitnami/nginx:1.25 AS prod
-WORKDIR /app
-
-COPY --from=build /app/dist .
-COPY ./nginx/alpinejs.conf /opt/bitnami/nginx/conf/server_blocks/nginx.conf
+# Etapa de producción
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
