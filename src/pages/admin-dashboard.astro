@@ -16,35 +16,7 @@ const metrics = {
   systemUptime: "99.9%",
   averageLoadTime: "1.2s",
 };
-
-let isModalOpen = false;
-let selectedDoctor = null;
-
-const openModal = (doctor = null) => {
-  selectedDoctor = doctor;
-  isModalOpen = true;
-  updateModal();
-};
-
-const closeModal = () => {
-  selectedDoctor = null;
-  isModalOpen = false;
-  updateModal();
-};
-
-const handleDelete = (id) => {
-  console.log("Doctor deleted:", id);
-};
-
-const updateModal = () => {
-  // Esta función actualiza el estado del modal en el DOM
-  const modal = document.getElementById("doctor-modal");
-  if (modal) {
-    modal.style.display = isModalOpen ? "flex" : "none";
-  }
-};
 ---
-
 <AdminLayout title="Admin Dashboard">
   <div class="py-10">
     <!-- Título del dashboard -->
@@ -54,7 +26,9 @@ const updateModal = () => {
         subtitle="Manage your doctors and monitor your platform."
       />
       <!-- Botón para agregar un nuevo doctor -->
-      <ButtonMain onclick="openModal()" class="'w-40'">Add Doctor</ButtonMain>
+      <ButtonMain id="add-doctor-btn" class="'w-40'">Add Doctor</ButtonMain>
+      <!-- Botón de logout -->
+      <ButtonMain to="/logout" variant="secondary" class="'w-32 ml-4'">Logout</ButtonMain>
     </div>
 
     <!-- Sección de métricas -->
@@ -102,13 +76,23 @@ const updateModal = () => {
         </thead>
         <tbody class="divide-y divide-slate-200 dark:divide-muted-700">
           {doctors.map((doctor) => (
-            <tr id={doctor.id.toString()}>
+            <tr id={`doctor-${doctor.id}`}>
               <td class="px-6 py-4">{doctor.name}</td>
               <td class="px-6 py-4">{doctor.email}</td>
               <td class="px-6 py-4">{doctor.specialty}</td>
               <td class="px-6 py-4">
-                <ButtonMain onclick={`openModal(${JSON.stringify(doctor)})`} size="small" class="'w-20'">Edit</ButtonMain>
-                <ButtonMain onclick={`handleDelete(${doctor.id})`} size="small" variant="danger" class="'w-20 ml-2'">Delete</ButtonMain>
+                <button
+                  onclick="openModal(${JSON.stringify(doctor)})"
+                  class="w-20 bg-primary-500 text-white rounded-md px-4 py-2 mr-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onclick="handleDelete(${doctor.id})"
+                  class="w-20 bg-red-500 text-white rounded-md px-4 py-2"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -119,17 +103,16 @@ const updateModal = () => {
     <!-- Modal para crear/editar doctor -->
     <div id="doctor-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
       <div class="bg-white dark:bg-muted-900 rounded-lg shadow-lg w-full max-w-md p-6">
-        <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
-          {selectedDoctor ? "Edit Doctor" : "Add Doctor"}
+        <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-4" id="modal-title">
+          Add Doctor
         </h2>
-        <form method="POST" action="/api/save-doctor" class="space-y-4">
+        <form id="doctor-form" class="space-y-4">
           <div>
             <label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Name</label>
             <input
               type="text"
               id="name"
               name="name"
-              value={selectedDoctor?.name || ""}
               required
               class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
             />
@@ -140,7 +123,6 @@ const updateModal = () => {
               type="email"
               id="email"
               name="email"
-              value={selectedDoctor?.email || ""}
               required
               class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
             />
@@ -151,14 +133,13 @@ const updateModal = () => {
               type="text"
               id="specialty"
               name="specialty"
-              value={selectedDoctor?.specialty || ""}
               required
               class="mt-1 block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
             />
           </div>
           <div class="flex justify-end">
             <button type="submit" class="w-32 bg-primary-500 text-white rounded-md px-4 py-2">
-              {selectedDoctor ? "Update" : "Create"}
+              Save
             </button>
             <button
               type="button"
@@ -178,27 +159,112 @@ const updateModal = () => {
     let isModalOpen = false;
     let selectedDoctor = null;
 
+    // Abrir el modal
     const openModal = (doctor = null) => {
       selectedDoctor = doctor;
       isModalOpen = true;
-      updateModal();
-    };
 
-    const closeModal = () => {
-      selectedDoctor = null;
-      isModalOpen = false;
-      updateModal();
-    };
-
-    const handleDelete = (id) => {
-      console.log("Doctor deleted:", id);
-    };
-
-    const updateModal = () => {
       const modal = document.getElementById("doctor-modal");
-      if (modal) {
-        modal.style.display = isModalOpen ? "flex" : "none";
+      const form = document.getElementById("doctor-form");
+      const modalTitle = document.getElementById("modal-title");
+
+      if (doctor) {
+        // Rellenar el formulario con los datos del doctor seleccionado
+        (form as HTMLFormElement).elements["name"].value = doctor.name;
+        (form as HTMLFormElement).elements["email"].value = doctor.email;
+        (form as HTMLFormElement).elements["specialty"].value = doctor.specialty;
+        modalTitle.textContent = "Edit Doctor";
+      } else {
+        // Limpiar el formulario si es un nuevo doctor
+        (form as HTMLFormElement).reset();
+        modalTitle.textContent = "Add Doctor";
+      }
+
+      modal.style.display = "flex";
+    };
+
+    // Cerrar el modal
+    const closeModal = () => {
+      isModalOpen = false;
+      selectedDoctor = null;
+
+      const modal = document.getElementById("doctor-modal");
+      modal.style.display = "none";
+    };
+
+    // Eliminar un doctor
+    const handleDelete = async (id) => {
+      try {
+        const response = await fetch(`https://api-generator.retool.com/H4uVTz/doctors/${id}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error al eliminar el doctor: ${response.statusText}`);
+        }
+
+        alert(`Doctor con ID ${id} eliminado.`);
+        window.location.reload(); // Refrescar la página
+      } catch (error) {
+        console.error("Error al eliminar el doctor:", error.message);
+        alert("Hubo un error al eliminar el doctor. Por favor, inténtalo de nuevo.");
       }
     };
+
+    // Guardar un doctor (crear o actualizar)
+    document.getElementById("doctor-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const name = (form as HTMLFormElement).elements["name"].value;
+      const email = (form as HTMLFormElement).elements["email"].value;
+      const specialty = (form as HTMLFormElement).elements["specialty"].value;
+
+      const doctorData = {
+        name: name,
+        email: email,
+        specialty: specialty,
+      };
+
+      try {
+        let response;
+
+        if (selectedDoctor) {
+          // Actualizar un doctor existente
+          response = await fetch(`https://api-generator.retool.com/H4uVTz/doctors/${selectedDoctor.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(doctorData),
+          });
+        } else {
+          // Crear un nuevo doctor
+          response = await fetch("https://api-generator.retool.com/H4uVTz/doctors", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(doctorData),
+          });
+        }
+
+        if (!response.ok) {
+          throw new Error(`Error al guardar el doctor: ${response.statusText}`);
+        }
+
+        alert(selectedDoctor ? "Doctor actualizado exitosamente." : "Doctor creado exitosamente.");
+        closeModal();
+        window.location.reload(); // Refrescar la página
+      } catch (error) {
+        console.error("Error al guardar el doctor:", error.message);
+        alert("Hubo un error al guardar el doctor. Por favor, inténtalo de nuevo.");
+      }
+    });
+
+    // Abrir el modal al hacer clic en "Add Doctor"
+    document.getElementById("add-doctor-btn").addEventListener("click", () => {
+      openModal();
+    });
   </script>
 </AdminLayout>

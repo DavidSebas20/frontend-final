@@ -1,0 +1,99 @@
+---
+// Importa Tailwind CSS
+import '../styles/main.css';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Dashboard</title>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+  <!-- Botón para crear citas -->
+  <!-- Botón con color personalizado -->
+  <button
+    id="create-appointment-btn"
+    class="bg-[#FF5733] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#FF7043] transition duration-300"
+  >
+    Crear Cita
+  </button>
+
+  <!-- Formulario para crear citas -->
+  <div id="appointment-form" class="hidden mt-6 w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
+    <h2 class="text-xl font-bold mb-4">Crear Nueva Cita</h2>
+    <form
+      action="http://appointment-alb-862525032.us-east-1.elb.amazonaws.com/create-appointment/appointments"
+      method="POST"
+      class="space-y-4"
+    >
+      <!-- Nombre del Paciente -->
+      <div>
+        <label for="patientName" class="block text-sm font-medium text-gray-700">Nombre del Paciente</label>
+        <input
+          type="text"
+          id="patientName"
+          name="patientName"
+          required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <!-- Nombre del Doctor -->
+      <div>
+        <label for="doctorName" class="block text-sm font-medium text-gray-700">Nombre del Doctor</label>
+        <input
+          type="text"
+          id="doctorName"
+          name="doctorName"
+          required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <!-- Fecha y Hora de la Cita -->
+      <div>
+        <label for="appointmentDateTime" class="block text-sm font-medium text-gray-700">Fecha y Hora</label>
+        <input
+          type="datetime-local"
+          id="appointmentDateTime"
+          name="appointmentDateTime"
+          required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <!-- Estado de la Cita -->
+      <div>
+        <label for="status" class="block text-sm font-medium text-gray-700">Estado</label>
+        <select
+          id="status"
+          name="status"
+          required
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="PENDING">Pendiente</option>
+          <option value="CANCELLED">Cancelada</option>
+        </select>
+      </div>
+
+      <!-- Botón de Envío -->
+      <button
+        type="submit"
+        class="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+      >
+        Guardar Cita
+      </button>
+    </form>
+  </div>
+
+  <!-- Script para mostrar/ocultar el formulario -->
+  <script>
+    function showForm() {
+      const form = document.getElementById('appointment-form');
+      form.classList.toggle('hidden');
+    }
+    document.getElementById('create-appointment-btn').onclick = showForm;
+  </script>
+</body>
+</html>
